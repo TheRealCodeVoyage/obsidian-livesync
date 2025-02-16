@@ -1,0 +1,3 @@
+.env
+couchdb-*
+*.txt

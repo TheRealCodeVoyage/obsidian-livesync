@@ -1,0 +1,50 @@
+version: "3.8"
+
+volumes:
+  couchdb-data:
+  couchdb-etc:
+
+services:
+  couchdb:
+    image: couchdb:latest
+    container_name: obsidian-livesync
+    env_file:
+      - .env
+    user: root
+    environment:
+      - hostname=obsidian.c0d3v0y463.com:5984
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+    volumes:
+      - ./couchdb-data:/opt/couchdb/data
+      - ./couchdb-etc:/opt/couchdb/etc/local.d
+    ports:
+      - "5984:5984/tcp"
+    restart: unless-stopped
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.obsidian-livesync.rule=Host(`obsidian.c0d3v0y463.com`)"
+      - "traefik.http.routers.obsidian-livesync.entrypoints=websecure"
+      - "traefik.http.routers.obsidian-livesync.tls=true"
+      - "traefik.http.routers.obsidian-livesync.tls.certresolver=cloudflare"
+      - "traefik.http.services.obsidian-livesync.loadbalancer.server.port=5984"
+      - "traefik.http.routers.obsidian-livesync.middlewares=obsidiancors"
+      # HTTP router (optional if you want HTTP → HTTPS redirect)
+      #- "traefik.http.routers.obsidian-livesync-http.rule=Host(`wg.c0d3v0y463.com`)"
+      #- "traefik.http.routers.obsidian-livesync-http.entrypoints=web"
+      #- "traefik.http.routers.obsidian-livesync-http.middlewares=obsidian-livesync-redirect"
+      #- "traefik.http.middlewares.obsidian-livesync-redirect.redirectscheme.scheme=https"
+      # CORS Headers for Obsidian LiveSync
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowmethods=GET,PUT,POST,HEAD,DELETE"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowheaders=accept,authorization,content-type,origin,referer"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolalloworiginlist=app://obsidian.md,capacitor://localhost,http://localhost"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolmaxage=3600"
+      - "traefik.http.middlewares.obsidiancors.headers.addvaryheader=true"
+      - "traefik.http.middlewares.obsidiancors.headers.accessControlAllowCredentials=true"
+
+networks:
+  frontend:
+    external: true
