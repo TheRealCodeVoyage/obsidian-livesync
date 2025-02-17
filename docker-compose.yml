@@ -12,7 +12,7 @@ services:
       - .env
     user: root
     environment:
-      - hostname=obsidian.c0d3v0y463.com:5984
+      - hostname=${HOSTNAME}:5984
       - COUCHDB_USER=${COUCHDB_USER}
       - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
     volumes:
@@ -36,7 +36,7 @@ services:
       - "traefik.http.routers.obsidian-livesync-http.entrypoints=web"
       - "traefik.http.routers.obsidian-livesync-http.middlewares=obsidian-livesync-redirect"
       - "traefik.http.middlewares.obsidian-livesync-redirect.redirectscheme.scheme=https"
-      
+
       # CORS Headers for Obsidian LiveSync
       - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowmethods=GET,PUT,POST,HEAD,DELETE"
       - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowheaders=accept,authorization,content-type,origin,referer"
