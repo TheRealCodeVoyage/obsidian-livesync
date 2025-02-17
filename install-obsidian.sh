@@ -32,7 +32,7 @@ done
 echo "░   ▒  ▓▐Configuring CouchDB..."
 
 # Generate the setup URI and passphrase
-export hostname="http://obsidian.c0d3v0y463.com:5984"
+export hostname="http://${HOSTNAME}"
 export username=${COUCHDB_USER}
 export password=${COUCHDB_PASSWORD}
 export database=${COUCHDB_DB_NAME}
@@ -44,7 +44,7 @@ echo "░   ▒  ▓▐CouchDB initialization complete."
 
 echo "░   ▒  ▓▐Generating setup URI and passphrase..."
 
-export hostname="https://obsidian.c0d3v0y463.com"
+export hostname="https://${HOSTNAME}"
 
 for i in {10..0}; do
   echo "░   ▒  ▓▐Waiting for SSL/TLS Certificate to Be Generated in...${i}"
@@ -62,7 +62,7 @@ if [ -x "$(command -v deno)" ]; then
 else  
   echo "!!! ERROR: Deno is not installed!"
   echo "░   ▒  ▓▐Installing Deno..."
-  curl -fsSL https://deno.land/install.sh | sudo sh
+  curl -fsSL https://deno.land/install.sh | sh
 fi
 
 deno=$(which deno)
